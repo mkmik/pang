@@ -23,6 +23,8 @@ $(function() {
         strokeWidth: 1
     });
 
+    var players = [player];
+
     var LEFT = 37;
     var RIGHT = 39;
     var SPACE = 32;
@@ -176,10 +178,11 @@ $(function() {
 
                 baloon.move(baloon.velocity.x * deltaX, baloon.velocity.y * deltaY);
 
-                // detect collisions with weapons
+                // detect collisions with weapons and players
                 var bx = baloon.getX();
                 var by = baloon.getY();
                 var br = baloon.getRadius();
+
                 for(var i=0; i<harpoons.length; i++ ) {
                     var h = harpoons[i];
                     var ax = h.getX();
@@ -196,7 +199,24 @@ $(function() {
                         h.kill();
                         break;
                     }
+                }
 
+                for(var i=0; i<players.length; i++ ) {
+                    var p = players[i];
+                    var ax = p.getX();
+                    var ay = p.getHeight();
+
+                    var intersect = false;
+
+                    if (ay >= by && Math.abs(ax - bx) <= br)
+                        intersect = true;
+                    else if(Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2)) <= br)
+                        intersect = true;
+
+                    if(intersect) {
+                        lostStage(p);
+                        break;
+                    }
                 }
             }
         });
@@ -210,6 +230,10 @@ $(function() {
 
             if(baloons.length == 0)
                 nextStage();
+        }
+
+        baloon.pause = function() {
+            animBaloon.stop();
         }
 
 
@@ -248,4 +272,29 @@ $(function() {
         layer.add(message);
     }
 
+
+    function lostStage(p) {
+        paused = true;
+
+        for(var i=0; i<baloons.length; i++) {
+            baloons[i].pause();
+        }
+
+        var message = new Kinetic.Text({
+            text: "Buuuuu!",
+            x: (stage.getWidth()-380) / 2,
+            y: (stage.getHeight()+80) / 2,
+            strokeWidth: 5,
+            fill: '#ddd',
+            fontSize: 14,
+            fontFamily: 'Calibri',
+            textFill: '#555',
+            width: 380,
+            padding: 20,
+            align: 'center',
+            scale: {x: 1, y: -1}
+        });
+
+        layer.add(message);
+    }
 });
