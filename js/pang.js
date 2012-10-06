@@ -114,4 +114,63 @@ $(function() {
 
         animHarpoon.start();
     }
-})
+
+    function createBaloon(size, step) {
+        var baloon = new Kinetic.Circle({
+            x: Math.round(stage.getWidth() / 3),
+            y: Math.round(stage.getHeight() / 2),
+            radius: size,
+            fill: "red",
+            stroke: "black",
+            strokeWidth: 4
+        });
+
+        baloon.velocity = {x: 1, y: 0};
+        baloon.step = step;
+
+        layer.add(baloon);
+
+        var animBaloon = new Kinetic.Animation({
+            node: layer,
+            func: function(frame) {
+                var gravity = 0.002;
+
+                var deltaX = Math.round(frame.timeDiff / baloon.step);
+                var deltaY = Math.round(frame.timeDiff / baloon.step);
+
+                baloon.velocity.y -= frame.timeDiff * gravity;
+
+                var pos = baloon.getPosition();
+                if(pos.x <= baloon.getRadius()) {
+                    baloon.setX(baloon.getRadius());
+                    baloon.velocity.x = -baloon.velocity.x;
+                }
+
+                if(pos.y <= baloon.getRadius()) {
+                    baloon.setY(baloon.getRadius());
+                    baloon.velocity.y = -baloon.velocity.y;
+                }
+
+                var usefulWidth = stage.getWidth() - baloon.getRadius();
+                if(pos.x >= usefulWidth) {
+                    baloon.setX(usefulWidth);
+                    baloon.velocity.x = -baloon.velocity.x;
+                }
+
+                var usefulHeight = stage.getHeight() - baloon.getRadius();
+                if(pos.y >= usefulHeight) {
+                    baloon.setY(usefulHeight);
+                    baloon.velocity.y = -baloon.velocity.y;
+                }
+
+                baloon.move(baloon.velocity.x * deltaX, baloon.velocity.y * deltaY);
+            }
+        });
+
+        animBaloon.start();
+    }
+
+    createBaloon(32, 12);
+    createBaloon(16, 24);
+
+});
