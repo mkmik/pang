@@ -142,6 +142,7 @@ $(function() {
 
         baloon.velocity = {x: dir, y: 0};
         baloon.step = step;
+        baloon.size = size;
 
         layer.add(baloon);
         baloons.push(baloon);
@@ -230,6 +231,11 @@ $(function() {
 
             var hi = baloons.indexOf(baloon);
             baloons.splice(hi, 1);
+
+            if(baloon.size > 8) {
+                createBaloon(baloon.size / 2, baloon.step, baloon.getX(), baloon.getY(), 1);
+                createBaloon(baloon.size / 2, baloon.step, baloon.getX(), baloon.getY(), -1);
+            }
 
             if(baloons.length == 0)
                 nextStage();
