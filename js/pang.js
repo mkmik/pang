@@ -230,7 +230,7 @@ $(function() {
 
                 for(var i=0; i<players.length; i++ ) {
                     var p = players[i];
-                    var ax = p.getX();
+                    var ax = p.getX() + p.getWidth()/2;
                     var ay = p.getHeight();
 
                     var intersect = false;
