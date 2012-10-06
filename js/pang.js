@@ -1,6 +1,8 @@
 'use strict';
 
 $(function() {
+    var paused = false;
+
     var stage = new Kinetic.Stage({
         container: "container",
         width: 640,
@@ -33,8 +35,10 @@ $(function() {
     $(window).keydown(function(ev) {
         keyboard[ev.keyCode] = true;
 
-        if(ev.keyCode == SPACE)
-            fire();
+        if(!paused) {
+            if(ev.keyCode == SPACE)
+                fire();
+        }
     });
     $(window).keyup(function(ev) {
         keyboard[ev.keyCode] = false;
@@ -72,6 +76,11 @@ $(function() {
     });
 
     animPlayer.start();
+
+    player.kill = function() {
+        animPlayer.stop();
+        player.remove();
+    }
 
     var harpoons = [];
     function fire() {
@@ -115,6 +124,7 @@ $(function() {
         animHarpoon.start();
     }
 
+    var baloons = [];
     function createBaloon(size, step) {
         var baloon = new Kinetic.Circle({
             x: Math.round(stage.getWidth() / 3),
@@ -129,6 +139,7 @@ $(function() {
         baloon.step = step;
 
         layer.add(baloon);
+        baloons.push(baloon);
 
         var animBaloon = new Kinetic.Animation({
             node: layer,
@@ -194,8 +205,11 @@ $(function() {
             animBaloon.stop();
             baloon.remove();
 
-            //var hi = baloons.indexOf(baloon);
-            //baloons.splice(hi, 1);
+            var hi = baloons.indexOf(baloon);
+            baloons.splice(hi, 1);
+
+            if(baloons.length == 0)
+                nextStage();
         }
 
 
@@ -204,5 +218,34 @@ $(function() {
 
     createBaloon(32, 12);
     createBaloon(16, 24);
+
+    function nextStage() {
+        console.log("next stage");
+
+        paused = true;
+
+/*        for(var i=0; i<harpoons.length; i++) {
+            harpoons[i].kill();
+        }
+*/
+        player.kill();
+
+        var message = new Kinetic.Text({
+            text: "Wow!",
+            x: (stage.getWidth()-380) / 2,
+            y: (stage.getHeight()+80) / 2,
+            strokeWidth: 5,
+            fill: '#ddd',
+            fontSize: 14,
+            fontFamily: 'Calibri',
+            textFill: '#555',
+            width: 380,
+            padding: 20,
+            align: 'center',
+            scale: {x: 1, y: -1}
+        });
+
+        layer.add(message);
+    }
 
 });
