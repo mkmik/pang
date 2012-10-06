@@ -127,9 +127,9 @@ $(function() {
     }
 
     var baloons = [];
-    function createBaloon(size, step) {
+    function createBaloon(size, step, x) {
         var baloon = new Kinetic.Circle({
-            x: Math.round(stage.getWidth() / 3),
+            x: x,
             y: Math.round(stage.getHeight() / 2),
             radius: size,
             fill: "red",
@@ -240,8 +240,8 @@ $(function() {
         animBaloon.start();
     }
 
-    createBaloon(32, 12);
-    createBaloon(16, 24);
+    createBaloon(32, 12, 120);
+    createBaloon(16, 24, 20);
 
     function nextStage() {
         console.log("next stage");
