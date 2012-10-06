@@ -2,6 +2,7 @@
 
 $(function() {
     var paused = false;
+    var dead = false;
 
     var stage = new Kinetic.Stage({
         container: "container",
@@ -28,6 +29,7 @@ $(function() {
     var LEFT = 37;
     var RIGHT = 39;
     var SPACE = 32;
+    var KEY_P = 80;
 
     var keyboard = {};
     keyboard[LEFT] = false;
@@ -36,6 +38,13 @@ $(function() {
 
     $(window).keydown(function(ev) {
         keyboard[ev.keyCode] = true;
+
+        if(ev.keyCode == KEY_P) {
+            if(paused)
+                resume();
+            else
+                pause();
+        }
 
         if(!paused) {
             if(ev.keyCode == SPACE)
@@ -89,7 +98,6 @@ $(function() {
 
     var harpoons = [];
     function fire() {
-        console.log("fire");
         var limit = 2;
         if(harpoons.length >= limit)
             return;
@@ -126,23 +134,38 @@ $(function() {
             harpoons.splice(hi, 1);
         }
 
+        harpoon.pause = function() {
+            animHarpoon.stop();
+        }
+
+        harpoon.resume = function() {
+            animHarpoon.start();
+        }
+
         animHarpoon.start();
     }
 
     var baloons = [];
-    function createBaloon(size, step, x, y, dir) {
+    function createBaloon(size, x, y, dir) {
         var baloon = new Kinetic.Circle({
             x: x,
             y: y,
             radius: size,
             fill: "red",
             stroke: "black",
-            strokeWidth: 4
+            strokeWidth: size / 8
         });
 
         baloon.velocity = {x: dir, y: 0};
-        baloon.step = step;
         baloon.size = size;
+        if(size == 32)
+            baloon.step = 8;
+        else if(size == 16)
+            baloon.step = 16;
+        else if(size == 8)
+            baloon.step = 24;
+        baloon.step = 24;
+
 
         layer.add(baloon);
         baloons.push(baloon);
@@ -233,8 +256,8 @@ $(function() {
             baloons.splice(hi, 1);
 
             if(baloon.size > 8) {
-                createBaloon(baloon.size / 2, baloon.step, baloon.getX(), baloon.getY(), 1);
-                createBaloon(baloon.size / 2, baloon.step, baloon.getX(), baloon.getY(), -1);
+                createBaloon(baloon.size / 2, baloon.getX(), baloon.getY(), 1);
+                createBaloon(baloon.size / 2, baloon.getX(), baloon.getY(), -1);
             }
 
             if(baloons.length == 0)
@@ -245,25 +268,28 @@ $(function() {
             animBaloon.stop();
         }
 
+        baloon.resume = function() {
+            animBaloon.start();
+        }
 
         animBaloon.start();
     }
 
-    createBaloon(32, 12, 120, 200, 1);
-    createBaloon(32, 12, 320, 200, -1);
-    createBaloon(16, 24, 20, 80, 1);
-    createBaloon(16, 24, 160, 80, -1);
-    createBaloon(16, 24, 240, 80, 1);
+    createBaloon(32, 120, 200, 1);
+    createBaloon(32, 320, 200, -1);
+    createBaloon(16, 20, 80, 1);
+    createBaloon(16, 160, 80, -1);
+    createBaloon(16, 240, 80, 1);
 
     function nextStage() {
         console.log("next stage");
 
         paused = true;
 
-/*        for(var i=0; i<harpoons.length; i++) {
-            harpoons[i].kill();
+        for(var i=0; i<harpoons.length; i++) {
+            harpoons[i].pause();
         }
-*/
+
         player.kill();
 
         var message = new Kinetic.Text({
@@ -292,6 +318,11 @@ $(function() {
             baloons[i].pause();
         }
 
+        for(var i=0; i<harpoons.length; i++) {
+            harpoons[i].pause();
+        }
+
+
         var message = new Kinetic.Text({
             text: "Buuuuu!",
             x: (stage.getWidth()-380) / 2,
@@ -308,5 +339,41 @@ $(function() {
         });
 
         layer.add(message);
+
+        dead = true;
     }
+
+    function pause() {
+        paused = true;
+
+        for(var i=0; i<baloons.length; i++) {
+            baloons[i].pause();
+        }
+
+        for(var i=0; i<harpoons.length; i++) {
+            harpoons[i].pause();
+        }
+    }
+
+    function resume() {
+        paused = false;
+        for(var i=0; i<baloons.length; i++) {
+            baloons[i].resume();
+        }
+
+        for(var i=0; i<harpoons.length; i++) {
+            harpoons[i].resume();
+        }
+    }
+
+    $(document).on({
+        'show.visibility': function() {
+            if(!dead) {
+                resume();
+            }
+        },
+        'hide.visibility': function() {
+            pause();
+        }
+    });
 });
