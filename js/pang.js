@@ -55,6 +55,9 @@ $(function() {
 
     var animPlayer = new Kinetic.Animation({
         func: function(frame) {
+            if(paused)
+                return;
+
             var step = 6;
             var delta = Math.round(frame.timeDiff / step);
 
@@ -127,17 +130,17 @@ $(function() {
     }
 
     var baloons = [];
-    function createBaloon(size, step, x) {
+    function createBaloon(size, step, x, y, dir) {
         var baloon = new Kinetic.Circle({
             x: x,
-            y: Math.round(stage.getHeight() / 2),
+            y: y,
             radius: size,
             fill: "red",
             stroke: "black",
             strokeWidth: 4
         });
 
-        baloon.velocity = {x: 1, y: 0};
+        baloon.velocity = {x: dir, y: 0};
         baloon.step = step;
 
         layer.add(baloon);
@@ -240,8 +243,11 @@ $(function() {
         animBaloon.start();
     }
 
-    createBaloon(32, 12, 120);
-    createBaloon(16, 24, 20);
+    createBaloon(32, 12, 120, 200, 1);
+    createBaloon(32, 12, 320, 200, -1);
+    createBaloon(16, 24, 20, 80, 1);
+    createBaloon(16, 24, 160, 80, -1);
+    createBaloon(16, 24, 240, 80, 1);
 
     function nextStage() {
         console.log("next stage");
