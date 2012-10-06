@@ -105,23 +105,10 @@ Scene.prototype.nextStage = function() {
     this.message("Wow!");
 }
 
-function Baloon(scene, size, x, y, dir) {
+function SceneObject(scene, object ,kind) {
     this.scene = scene;
-    this.object = new Kinetic.Circle({
-        x: x,
-        y: y,
-        radius: size,
-        fill: "red",
-        stroke: "black",
-        strokeWidth: size / 8
-    });
 
-    this.velocity = {x: dir, y: 0};
-    this.size = size;
-
-    this.step = 24;
-
-    scene.objects.baloons.push(this);
+    scene.objects[kind].push(this);
     scene.layer.add(this.object);
 
     this.anim = new Kinetic.Animation({
@@ -135,6 +122,23 @@ function Baloon(scene, size, x, y, dir) {
     });
 
     this.anim.start();
+}
+
+function Baloon(scene, size, x, y, dir) {
+    this.object = new Kinetic.Circle({
+        x: x,
+        y: y,
+        radius: size,
+        fill: "red",
+        stroke: "black",
+        strokeWidth: size / 8
+    });
+
+    this.velocity = {x: dir, y: 0};
+    this.size = size;
+    this.step = 24;
+
+    SceneObject.apply(this, [scene, this.object, 'baloons']);
 }
 
 Baloon.prototype.render = function(frame) {
@@ -245,18 +249,7 @@ function Player(scene, x, y) {
         strokeWidth: 1
     });
 
-    scene.objects.players.push(this);
-    scene.layer.add(this.object);
-
-    this.anim = new Kinetic.Animation({
-        node: scene.layer,
-        func: function(frame) {
-            this.render(frame);
-            this.collisions();
-        }.bind(this)
-    });
-
-    this.anim.start();
+    SceneObject.apply(this, [scene, this.object, 'players'])
 }
 
 Player.prototype.render = function(frame) {
@@ -296,20 +289,7 @@ function Harpoon(scene, player) {
         strokeWidth: 4
     });
 
-    scene.objects.harpoons.push(this);
-    scene.layer.add(this.object);
-
-    this.anim = new Kinetic.Animation({
-        node: scene.layer,
-        func: function(frame) {
-            if(!this.scene.paused) {
-                this.render(frame);
-                this.collisions();
-            }
-        }.bind(this)
-    });
-
-    this.anim.start();
+    SceneObject.apply(this, [scene, this.object, 'harpoons'])
 }
 
 Harpoon.prototype.render = function(frame) {
