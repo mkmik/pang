@@ -8,9 +8,9 @@ $(function() {
         scale: {x:1, y:-1},
         offset: {x: 0, y: 468}
     });
-    
+
     var layer = new Kinetic.Layer();
-    
+
     var player = new Kinetic.Rect({
         x: Math.round(stage.getWidth()/2),
         y: 0,
@@ -29,7 +29,7 @@ $(function() {
     keyboard[LEFT] = false;
     keyboard[RIGHT] = false;
     keyboard[SPACE] = false;
-    
+
     $(window).keydown(function(ev) {
         keyboard[ev.keyCode] = true;
 
@@ -40,10 +40,10 @@ $(function() {
         keyboard[ev.keyCode] = false;
     });
 
-    
+
     // add the shape to the layer
     layer.add(player);
-    
+
     // add the layer to the stage
     stage.add(layer);
 
@@ -70,7 +70,7 @@ $(function() {
         },
         node: layer
     });
-    
+
     animPlayer.start();
 
     var harpoons = [];
@@ -92,7 +92,6 @@ $(function() {
         layer.add(harpoon);
         harpoons.push(harpoon);
 
-        console.log(harpoon);
         var animHarpoon = new Kinetic.Animation({
             node: layer,
             func: function(frame) {
@@ -100,17 +99,19 @@ $(function() {
                 var delta = Math.round(frame.timeDiff / step);
 
                 harpoon.setHeight(harpoon.getHeight() + delta);
-                if(harpoon.getHeight() >= stage.getHeight()) {
-                    animHarpoon.stop();
-                    harpoon.remove();
-
-                    var hi = harpoons.indexOf(harpoon);
-                    harpoons.splice(hi, 1);
-                }
+                if(harpoon.getHeight() >= stage.getHeight())
+                    harpoon.kill();
             }
         });
 
+        harpoon.kill = function() {
+            animHarpoon.stop();
+            harpoon.remove();
+
+            var hi = harpoons.indexOf(harpoon);
+            harpoons.splice(hi, 1);
+        }
+
         animHarpoon.start();
-        
     }
 })
