@@ -164,8 +164,40 @@ $(function() {
                 }
 
                 baloon.move(baloon.velocity.x * deltaX, baloon.velocity.y * deltaY);
+
+                // detect collisions with weapons
+                var bx = baloon.getX();
+                var by = baloon.getY();
+                var br = baloon.getRadius();
+                for(var i=0; i<harpoons.length; i++ ) {
+                    var h = harpoons[i];
+                    var ax = h.getX();
+                    var ay = h.getHeight();
+
+                    var intersect = false;
+                    if (ay >= by && Math.abs(ax - bx) <= br)
+                        intersect = true;
+                    else if(Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2)) <= br)
+                        intersect = true;
+
+                    if(intersect) {
+                        baloon.kill();
+                        h.kill();
+                        break;
+                    }
+
+                }
             }
         });
+
+        baloon.kill = function() {
+            animBaloon.stop();
+            baloon.remove();
+
+            //var hi = baloons.indexOf(baloon);
+            //baloons.splice(hi, 1);
+        }
+
 
         animBaloon.start();
     }
