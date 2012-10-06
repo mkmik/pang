@@ -76,6 +76,10 @@ $(function() {
     var harpoons = [];
     function fire() {
         console.log("fire");
+        var limit = 2;
+        if(harpoons.length >= limit)
+            return;
+
         var harpoon = new Kinetic.Rect({
             x: player.getPosition().x + Math.round(player.getWidth()/2),
             y: player.getPosition().y,
@@ -86,6 +90,7 @@ $(function() {
         });
 
         layer.add(harpoon);
+        harpoons.push(harpoon);
 
         console.log(harpoon);
         var animHarpoon = new Kinetic.Animation({
@@ -98,6 +103,9 @@ $(function() {
                 if(harpoon.getHeight() >= stage.getHeight()) {
                     animHarpoon.stop();
                     harpoon.remove();
+
+                    var hi = harpoons.indexOf(harpoon);
+                    harpoons.splice(hi, 1);
                 }
             }
         });
