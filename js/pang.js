@@ -6,6 +6,9 @@ var SPACE = 32;
 var KEY_P = 80;
 
 function Scene() {
+    this.demo = false;
+    //this.demo = true;
+
     this.stage = new Kinetic.Stage({
         container: "container",
         width: 640,
@@ -134,7 +137,8 @@ function Baloon(scene, size, x, y, dir) {
         strokeWidth: size / 8
     });
 
-    this.velocity = {x: dir, y: 0};
+    this.maxVelocity = Math.sqrt(16 * size/32);
+    this.velocity = {x: dir * this.maxVelocity / 4, y: 0};
     this.size = size;
     this.step = 24;
 
@@ -157,7 +161,9 @@ Baloon.prototype.render = function(frame) {
 
     if(pos.y <= this.object.getRadius()) {
         this.object.setY(this.object.getRadius());
-        this.velocity.y = -this.velocity.y;
+//        this.velocity.y = -this.velocity.y;
+
+        this.velocity.y = this.maxVelocity;
     }
 
     var usefulWidth = this.scene.stage.getWidth() - this.object.getRadius();
@@ -214,7 +220,8 @@ Baloon.prototype.collisions = function() {
             intersect = true;
 
         if(intersect) {
-            this.scene.lost(p);
+            if(!this.scene.demo)
+                this.scene.lost(p);
             break;
         }
     }
