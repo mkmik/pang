@@ -6,8 +6,8 @@ var SPACE = 32;
 var KEY_P = 80;
 
 function Scene() {
-    this.demo = false;
-    //this.demo = true;
+    //this.demo = false;
+    this.demo = true;
 
     this.stage = new Kinetic.Stage({
         container: "container",
@@ -249,12 +249,118 @@ function Player(scene, x, y) {
     this.object = new Kinetic.Rect({
         x: Math.round(scene.stage.getWidth()/2),
         y: 0,
-        width: 20,
+        width: 26,
         height: 30,
-        fill: "#00D2FF",
-        stroke: "black",
-        strokeWidth: 1
+//        fill: "#00D2FF",
+//        stroke: "black",
+//        strokeWidth: 1
+        strokeWidth: 0
     });
+
+    var imageObj = new Image();
+    var animations = {
+        'idle': [{
+            x: 0,
+            y: 1,
+            width: 32,
+            height: 32
+        }],
+        'right': [
+            {
+            x: 31*0 + 0,
+            y: 1,
+            width: 32,
+            height: 32
+            },
+
+            {
+            x: 31*1 + 3,
+            y: 1,
+            width: 32,
+            height: 32
+            },
+
+            {
+            x: 31*2 + 6,
+            y: 1,
+            width: 32,
+            height: 32
+            },
+
+            {
+            x: 31*3 + 9,
+            y: 1,
+            width: 32,
+            height: 32
+            },
+
+            {
+            x: 31*4 + 12,
+            y: 1,
+            width: 32,
+            height: 32
+            },
+        ],
+        'left': [
+
+            {
+            x: 31*12 + 2,
+            y: 1,
+            width: 32,
+            height: 32
+            },
+
+            {
+            x: 31*13 + 5,
+            y: 1,
+            width: 32,
+            height: 32
+            },
+
+            {
+            x: 31*14 + 8,
+            y: 1,
+            width: 32,
+            height: 32
+            },
+
+            {
+            x: 31*15 + 11,
+            y: 1,
+            width: 32,
+            height: 32
+            },
+
+            {
+            x: 31*16 + 14,
+            y: 1,
+            width: 32,
+            height: 30
+            },
+
+        ]
+    };
+
+    imageObj.onload = function() {
+        console.log("loaded");
+        var blob = new Kinetic.Sprite({
+            x: x,
+            y: y + 32,
+            image: imageObj,
+            animation: 'left',
+            animations: animations,
+            frameRate: 10
+        });
+        blob.setScale(1, -1);
+        console.log(blob);
+
+        scene.layer.add(blob);
+        blob.start();
+        this.blob = blob;
+
+    }.bind(this);
+
+    imageObj.src = "img/sprites/pang.png";
 
     SceneObject.apply(this, [scene, this.object, 'players'])
 }
@@ -263,18 +369,40 @@ Player.prototype.render = function(frame) {
     var step = 6;
     var delta = Math.round(frame.timeDiff / step);
 
-    if(this.scene.keyboard[LEFT])
+    if(this.scene.keyboard[LEFT]) {
         this.object.move(-delta, 0);
-    if(this.scene.keyboard[RIGHT])
+        this.blob.move(-delta, 0);
+        if(this.direction != LEFT)
+            this.blob.setAnimation('left');
+
+        this.direction = LEFT;
+    } else if(this.scene.keyboard[RIGHT]) {
         this.object.move(delta, 0);
+        this.blob.move(delta, 0);
+
+        if(this.direction != RIGHT)
+            this.blob.setAnimation('right');
+
+        this.direction = RIGHT;
+    } else {
+        if(this.blob != undefined) {
+            this.blob.setAnimation('idle');
+            //this.blob.setAnimation(this.direction == RIGHT ? 'left' : 'right');
+        }
+        this.direction = undefined;
+    }
 
     var pos = this.object.getPosition();
-    if(pos.x < 0)
+    if(pos.x < 0) {
         this.object.setX(0);
+        this.blob.setX(0);
+    }
 
     var usefulWidth = this.scene.stage.getWidth() - this.object.getWidth();
-    if(pos.x > usefulWidth)
+    if(pos.x > usefulWidth) {
         this.object.setX(usefulWidth);
+        this.blob.setX(usefulWidth);
+    }
 }
 
 Player.prototype.collisions = function() {
