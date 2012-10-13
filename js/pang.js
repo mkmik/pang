@@ -128,7 +128,10 @@ function SceneObject(scene, object ,kind) {
     this.anim.start();
 }
 
-function Baloon(scene, size, x, y, dir) {
+function Baloon(scene, size, x, y, dir, yvel) {
+    if(yvel === undefined)
+	yvel = 0;
+
     this.object = new Kinetic.Circle({
 	x: x,
 	y: y,
@@ -139,7 +142,7 @@ function Baloon(scene, size, x, y, dir) {
     });
 
     this.maxVelocity = Math.sqrt(16 * size/32);
-    this.velocity = {x: dir * this.maxVelocity / 4, y: 0};
+    this.velocity = {x: dir * this.maxVelocity / 4, y: yvel};
     this.size = size;
     this.step = 24;
 
@@ -236,8 +239,8 @@ Baloon.prototype.kill = function() {
     this.scene.objects.baloons.splice(hi, 1);
 
     if(this.size > 8) {
-	new Baloon(this.scene, this.size / 2, this.object.getX(), this.object.getY(), 1);
-	new Baloon(this.scene, this.size / 2, this.object.getX(), this.object.getY(), -1);
+	new Baloon(this.scene, this.size / 2, this.object.getX(), this.object.getY(),  1, 1);
+	new Baloon(this.scene, this.size / 2, this.object.getX(), this.object.getY(), -1, 1);
     }
 
     if(this.scene.objects.baloons.length == 0) {
