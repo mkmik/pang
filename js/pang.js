@@ -9,12 +9,13 @@ function Scene() {
     //this.demo = false;
     this.demo = true;
 
+    var hh = 200;
     this.stage = new Kinetic.Stage({
 	container: "container",
-	width: 640,
-	height: 468,
+	width: 400,
+	height: hh,
 	scale: {x:1, y:-1},
-	offset: {x: 0, y: 468}
+	offset: {x: 0, y: hh}
     });
 
     this.layer = new Kinetic.Layer();
@@ -295,14 +296,14 @@ function Player(scene, x, y) {
 	return res;
     }
 
-    animations.leftIdle = genFrameRange(5, 1);
-    animations.rightIdle = genFrameRange(16, 1);
+    animations.leftIdle = genFrameRange(16, 1);
+    animations.rightIdle = genFrameRange(5, 1);
 
     animations.right = genFrameRange(0, 4);
     animations.left = genFrameRange(11, 4);
 
-    animations.leftFire = genFrames(21, 5);
-    animations.rightFire = genFrames(20, 16);
+    animations.leftFire = genFrames(21, 16);
+    animations.rightFire = genFrames(20, 5);
 
     imageObj.onload = function() {
 	console.log("loaded");
@@ -310,7 +311,7 @@ function Player(scene, x, y) {
 	    x: x,
 	    y: y + 32,
 	    image: imageObj,
-	    animation: 'right',
+	    animation: 'rightIdle',
 	    animations: animations,
 	    frameRate: 10
 	});
@@ -416,7 +417,7 @@ function Harpoon(scene, player) {
     imageObj.onload = function() {
 	console.log("loaded");
 	var blob = new Kinetic.Image({
-	    x: x,
+	    x: x - 6,
 	    y: y + 22,
 	    width: 12,
 	    height: 203,
