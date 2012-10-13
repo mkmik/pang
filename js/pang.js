@@ -10,11 +10,11 @@ function Scene() {
     this.demo = true;
 
     this.stage = new Kinetic.Stage({
-        container: "container",
-        width: 640,
-        height: 468,
-        scale: {x:1, y:-1},
-        offset: {x: 0, y: 468}
+	container: "container",
+	width: 640,
+	height: 468,
+	scale: {x:1, y:-1},
+	offset: {x: 0, y: 468}
     });
 
     this.layer = new Kinetic.Layer();
@@ -32,14 +32,14 @@ function Scene() {
     $(window).keyup(this.keyup.bind(this));
 
     $(document).on({
-        'show.visibility': function() {
-            if(!this.dead) {
-                this.resume();
-            }
-        }.bind(this),
-        'hide.visibility': function() {
-            this.pause();
-        }.bind(this)
+	'show.visibility': function() {
+	    if(!this.dead) {
+		this.resume();
+	    }
+	}.bind(this),
+	'hide.visibility': function() {
+	    this.pause();
+	}.bind(this)
     });
 
 }
@@ -48,15 +48,15 @@ Scene.prototype.keydown = function(ev) {
     this.keyboard[ev.keyCode] = true;
 
     if(ev.keyCode == KEY_P) {
-        if(this.paused)
-            this.resume();
-        else
-            this.pause();
+	if(this.paused)
+	    this.resume();
+	else
+	    this.pause();
     }
 
     if(!this.paused) {
-        if(ev.keyCode == SPACE)
-            this.objects.players[0].fire();
+	if(ev.keyCode == SPACE)
+	    this.objects.players[0].fire();
     }
 }
 
@@ -67,31 +67,31 @@ Scene.prototype.keyup = function(ev) {
 Scene.prototype.pause = function() {
     this.paused = true;
     for (var kind in this.objects)
-        for(var i = 0; i < this.objects[kind].length; i++)
-            this.objects[kind][i].anim.stop();
+	for(var i = 0; i < this.objects[kind].length; i++)
+	    this.objects[kind][i].anim.stop();
 }
 
 Scene.prototype.resume = function() {
     this.paused = false;
     for (var kind in this.objects)
-        for(var i = 0; i < this.objects[kind].length; i++)
-            this.objects[kind][i].anim.start();
+	for(var i = 0; i < this.objects[kind].length; i++)
+	    this.objects[kind][i].anim.start();
 }
 
 Scene.prototype.message = function(msg) {
     var message = new Kinetic.Text({
-        text: msg,
-        x: (this.stage.getWidth()-380) / 2,
-        y: (this.stage.getHeight()+80) / 2,
-        strokeWidth: 5,
-        fill: '#ddd',
-        fontSize: 14,
-        fontFamily: 'Calibri',
-        textFill: '#555',
-        width: 380,
-        padding: 20,
-        align: 'center',
-        scale: {x: 1, y: -1}
+	text: msg,
+	x: (this.stage.getWidth()-380) / 2,
+	y: (this.stage.getHeight()+80) / 2,
+	strokeWidth: 5,
+	fill: '#ddd',
+	fontSize: 14,
+	fontFamily: 'Calibri',
+	textFill: '#555',
+	width: 380,
+	padding: 20,
+	align: 'center',
+	scale: {x: 1, y: -1}
     });
 
     this.layer.add(message);
@@ -115,13 +115,13 @@ function SceneObject(scene, object ,kind) {
     scene.layer.add(this.object);
 
     this.anim = new Kinetic.Animation({
-        node: scene.layer,
-        func: function(frame) {
-            if(!this.scene.paused) {
-                this.render(frame);
-                this.collisions();
-            }
-        }.bind(this)
+	node: scene.layer,
+	func: function(frame) {
+	    if(!this.scene.paused) {
+		this.render(frame);
+		this.collisions();
+	    }
+	}.bind(this)
     });
 
     this.anim.start();
@@ -129,12 +129,12 @@ function SceneObject(scene, object ,kind) {
 
 function Baloon(scene, size, x, y, dir) {
     this.object = new Kinetic.Circle({
-        x: x,
-        y: y,
-        radius: size,
-        fill: "red",
-        stroke: "black",
-        strokeWidth: size / 8
+	x: x,
+	y: y,
+	radius: size,
+	fill: "red",
+	stroke: "black",
+	strokeWidth: size / 8
     });
 
     this.maxVelocity = Math.sqrt(16 * size/32);
@@ -155,27 +155,27 @@ Baloon.prototype.render = function(frame) {
 
     var pos = this.object.getPosition();
     if(pos.x <= this.object.getRadius()) {
-        this.object.setX(this.object.getRadius());
-        this.velocity.x = -this.velocity.x;
+	this.object.setX(this.object.getRadius());
+	this.velocity.x = -this.velocity.x;
     }
 
     if(pos.y <= this.object.getRadius()) {
-        this.object.setY(this.object.getRadius());
+	this.object.setY(this.object.getRadius());
 //        this.velocity.y = -this.velocity.y;
 
-        this.velocity.y = this.maxVelocity;
+	this.velocity.y = this.maxVelocity;
     }
 
     var usefulWidth = this.scene.stage.getWidth() - this.object.getRadius();
     if(pos.x >= usefulWidth) {
-        this.object.setX(usefulWidth);
-        this.velocity.x = -this.velocity.x;
+	this.object.setX(usefulWidth);
+	this.velocity.x = -this.velocity.x;
     }
 
     var usefulHeight = this.scene.stage.getHeight() - this.object.getRadius();
     if(pos.y >= usefulHeight) {
-        this.object.setY(usefulHeight);
-        this.velocity.y = -this.velocity.y;
+	this.object.setY(usefulHeight);
+	this.velocity.y = -this.velocity.y;
     }
 
     this.object.move(this.velocity.x * deltaX, this.velocity.y * deltaY);
@@ -189,41 +189,41 @@ Baloon.prototype.collisions = function() {
 
     var harpoons = this.scene.objects.harpoons;
     for(var i=0; i < harpoons.length; i++) {
-        var h = harpoons[i];
-        var ax = h.object.getX();
-        var ay = h.object.getHeight();
+	var h = harpoons[i];
+	var ax = h.object.getX();
+	var ay = h.object.getHeight();
 
-        var intersect = false;
-        if (ay >= by && Math.abs(ax - bx) <= br)
-            intersect = true;
-        else if(Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2)) <= br)
-            intersect = true;
+	var intersect = false;
+	if (ay >= by && Math.abs(ax - bx) <= br)
+	    intersect = true;
+	else if(Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2)) <= br)
+	    intersect = true;
 
-        if(intersect) {
-            this.kill();
-            h.kill();
-            break;
-        }
+	if(intersect) {
+	    this.kill();
+	    h.kill();
+	    break;
+	}
     }
 
     var players = this.scene.objects.players;
     for(var i=0; i<players.length; i++ ) {
-        var p = players[i];
-        var ax = p.object.getX() + p.object.getWidth()/2;
-        var ay = p.object.getHeight();
+	var p = players[i];
+	var ax = p.object.getX() + p.object.getWidth()/2;
+	var ay = p.object.getHeight();
 
-        var intersect = false;
+	var intersect = false;
 
-        if (ay >= by && Math.abs(ax - bx) <= br)
-            intersect = true;
-        else if(Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2)) <= br)
-            intersect = true;
+	if (ay >= by && Math.abs(ax - bx) <= br)
+	    intersect = true;
+	else if(Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2)) <= br)
+	    intersect = true;
 
-        if(intersect) {
-            if(!this.scene.demo)
-                this.scene.lost(p);
-            break;
-        }
+	if(intersect) {
+	    if(!this.scene.demo)
+		this.scene.lost(p);
+	    break;
+	}
     }
 }
 
@@ -235,128 +235,77 @@ Baloon.prototype.kill = function() {
     this.scene.objects.baloons.splice(hi, 1);
 
     if(this.size > 8) {
-        new Baloon(this.scene, this.size / 2, this.object.getX(), this.object.getY(), 1);
-        new Baloon(this.scene, this.size / 2, this.object.getX(), this.object.getY(), -1);
+	new Baloon(this.scene, this.size / 2, this.object.getX(), this.object.getY(), 1);
+	new Baloon(this.scene, this.size / 2, this.object.getX(), this.object.getY(), -1);
     }
 
     if(this.scene.objects.baloons.length == 0) {
-        this.scene.nextStage();
+	this.scene.nextStage();
     }
 }
 
 function Player(scene, x, y) {
     this.scene = scene;
     this.object = new Kinetic.Rect({
-        x: Math.round(scene.stage.getWidth()/2),
-        y: 0,
-        width: 26,
-        height: 30,
+	x: Math.round(scene.stage.getWidth()/2),
+	y: 0,
+	width: 26,
+	height: 30,
 //        fill: "#00D2FF",
 //        stroke: "black",
 //        strokeWidth: 1
-        strokeWidth: 0
+	strokeWidth: 0
     });
 
+    this.keyboard = {};
+    $(window).keydown(function(ev) {
+	if(!this.keyboard[ev.keyCode])
+	    this.keydown(ev);
+	this.keyboard[ev.keyCode] = true;
+    }.bind(this));
+    $(window).keyup(function(ev) {
+	this.keyup(ev);
+	this.keyboard[ev.keyCode] = false;
+    }.bind(this));
+
     var imageObj = new Image();
-    var animations = {
-        'idle': [{
-            x: 0,
-            y: 1,
-            width: 32,
-            height: 32
-        }],
-        'right': [
-            {
-            x: 31*0 + 0,
-            y: 1,
-            width: 32,
-            height: 32
-            },
+    var ww = 34;
+    var animations = {};
 
-            {
-            x: 31*1 + 3,
-            y: 1,
-            width: 32,
-            height: 32
-            },
+    function animRange(from, len) {
+	var res = [];
+	for(var i=from; i<(from+len); i++)
+	    res.push({
+		x: ww*i,
+		y: 1,
+		width: 32,
+		height: 32
+	    });
+	return res;
+    }
 
-            {
-            x: 31*2 + 6,
-            y: 1,
-            width: 32,
-            height: 32
-            },
+    animations.leftIdle = animRange(5, 1);
+    animations.rightIdle = animRange(16, 1);
 
-            {
-            x: 31*3 + 9,
-            y: 1,
-            width: 32,
-            height: 32
-            },
-
-            {
-            x: 31*4 + 12,
-            y: 1,
-            width: 32,
-            height: 32
-            },
-        ],
-        'left': [
-
-            {
-            x: 31*12 + 2,
-            y: 1,
-            width: 32,
-            height: 32
-            },
-
-            {
-            x: 31*13 + 5,
-            y: 1,
-            width: 32,
-            height: 32
-            },
-
-            {
-            x: 31*14 + 8,
-            y: 1,
-            width: 32,
-            height: 32
-            },
-
-            {
-            x: 31*15 + 11,
-            y: 1,
-            width: 32,
-            height: 32
-            },
-
-            {
-            x: 31*16 + 14,
-            y: 1,
-            width: 32,
-            height: 30
-            },
-
-        ]
-    };
+    animations.right = animRange(0, 4);
+    animations.left = animRange(11, 4);
 
     imageObj.onload = function() {
-        console.log("loaded");
-        var blob = new Kinetic.Sprite({
-            x: x,
-            y: y + 32,
-            image: imageObj,
-            animation: 'left',
-            animations: animations,
-            frameRate: 10
-        });
-        blob.setScale(1, -1);
-        console.log(blob);
+	console.log("loaded");
+	var blob = new Kinetic.Sprite({
+	    x: x,
+	    y: y + 32,
+	    image: imageObj,
+	    animation: 'right',
+	    animations: animations,
+	    frameRate: 10
+	});
+	blob.setScale(1, -1);
+	console.log(blob);
 
-        scene.layer.add(blob);
-        blob.start();
-        this.blob = blob;
+	scene.layer.add(blob);
+	blob.start();
+	this.blob = blob;
 
     }.bind(this);
 
@@ -365,43 +314,48 @@ function Player(scene, x, y) {
     SceneObject.apply(this, [scene, this.object, 'players'])
 }
 
+Player.prototype.keydown = function(ev) {
+    if(ev.keyCode == LEFT) {
+	this.direction = LEFT;
+	this.blob.setAnimation('left');
+    } else if(ev.keyCode == RIGHT) {
+	this.direction = RIGHT;
+	this.blob.setAnimation('right');
+    }
+}
+
+Player.prototype.keyup = function(ev) {
+    if(ev.keyCode == LEFT && this.direction == LEFT) {
+	this.blob.setAnimation('leftIdle');
+	this.direction = undefined;
+    } else if(ev.keyCode == RIGHT && this.direction == RIGHT) {
+	this.blob.setAnimation('rightIdle');
+	this.direction = undefined;
+    }
+}
+
 Player.prototype.render = function(frame) {
     var step = 6;
     var delta = Math.round(frame.timeDiff / step);
 
-    if(this.scene.keyboard[LEFT]) {
-        this.object.move(-delta, 0);
-        this.blob.move(-delta, 0);
-        if(this.direction != LEFT)
-            this.blob.setAnimation('left');
-
-        this.direction = LEFT;
-    } else if(this.scene.keyboard[RIGHT]) {
-        this.object.move(delta, 0);
-        this.blob.move(delta, 0);
-
-        if(this.direction != RIGHT)
-            this.blob.setAnimation('right');
-
-        this.direction = RIGHT;
-    } else {
-        if(this.blob != undefined) {
-            this.blob.setAnimation('idle');
-            //this.blob.setAnimation(this.direction == RIGHT ? 'left' : 'right');
-        }
-        this.direction = undefined;
+    if(this.direction == LEFT) {
+	this.object.move(-delta, 0);
+	this.blob.move(-delta, 0);
+    } else if(this.direction == RIGHT) {
+	this.object.move(delta, 0);
+	this.blob.move(delta, 0);
     }
 
     var pos = this.object.getPosition();
     if(pos.x < 0) {
-        this.object.setX(0);
-        this.blob.setX(0);
+	this.object.setX(0);
+	this.blob.setX(0);
     }
 
     var usefulWidth = this.scene.stage.getWidth() - this.object.getWidth();
     if(pos.x > usefulWidth) {
-        this.object.setX(usefulWidth);
-        this.blob.setX(usefulWidth);
+	this.object.setX(usefulWidth);
+	this.blob.setX(usefulWidth);
     }
 }
 
@@ -416,12 +370,12 @@ function Harpoon(scene, player) {
     this.scene = scene;
 
     this.object = new Kinetic.Rect({
-        x: player.object.getPosition().x + Math.round(player.object.getWidth()/2),
-        y: player.object.getPosition().y,
-        width: 4,
-        height: 20,
-        stroke: "blue",
-        strokeWidth: 4
+	x: player.object.getPosition().x + Math.round(player.object.getWidth()/2),
+	y: player.object.getPosition().y,
+	width: 4,
+	height: 20,
+	stroke: "blue",
+	strokeWidth: 4
     });
 
     SceneObject.apply(this, [scene, this.object, 'harpoons'])
@@ -433,7 +387,7 @@ Harpoon.prototype.render = function(frame) {
 
     this.object.setHeight(this.object.getHeight() + delta);
     if(this.object.getHeight() >= this.scene.stage.getHeight())
-        this.kill();
+	this.kill();
 }
 
 Harpoon.prototype.collisions = function(frame) {
