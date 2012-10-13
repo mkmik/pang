@@ -279,7 +279,7 @@ Baloon.prototype.kill = function() {
     var hi = this.scene.objects.baloons.indexOf(this);
     this.scene.objects.baloons.splice(hi, 1);
 
-    if(this.type < 4) {
+    if(this.type < 3) {
 	new Baloon(this.scene, this.type + 1, this.object.getX(), this.object.getY(),  1, 1);
 	new Baloon(this.scene, this.type + 1, this.object.getX(), this.object.getY(), -1, 1);
     }
