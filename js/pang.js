@@ -128,7 +128,21 @@ function SceneObject(scene, object ,kind) {
     this.anim.start();
 }
 
-function Baloon(scene, size, x, y, dir, yvel) {
+function Baloon(scene, type, x, y, dir, yvel) {
+    this.type = type;
+
+    var size;
+    if(type == 1)
+	size = 42;
+    else if(type == 2)
+	size = 32;
+    else if(type == 3)
+	size = 16;
+    else if(type == 4)
+	size = 8;
+
+    size = size / 2; // size is radius
+
     if(yvel === undefined)
 	yvel = 0;
 
@@ -136,9 +150,10 @@ function Baloon(scene, size, x, y, dir, yvel) {
 	x: x,
 	y: y,
 	radius: size,
-	fill: "red",
-	stroke: "black",
-	strokeWidth: size / 8
+//	fill: "red",
+//	stroke: "black",
+//	strokeWidth: size / 8
+	strokeWidth: 0
     });
 
     this.maxVelocity = Math.sqrt(16 * size/32);
@@ -147,6 +162,25 @@ function Baloon(scene, size, x, y, dir, yvel) {
     this.step = 24;
 
     SceneObject.apply(this, [scene, this.object, 'baloons']);
+
+    ///
+
+    var imageObj = new Image();
+    imageObj.onload = function() {
+	var blob = new Kinetic.Image({
+	    x: x - imageObj.width / 2,
+	    y: y + imageObj.height / 2,
+	    image: imageObj,
+	});
+	blob.setScale(1, -1);
+
+	scene.layer.add(blob);
+	this.blob = blob;
+
+    }.bind(this);
+
+    imageObj.src = "img/sprites/baloon"+type+".png";
+
 }
 
 Baloon.prototype.render = function(frame) {
@@ -160,29 +194,35 @@ Baloon.prototype.render = function(frame) {
     var pos = this.object.getPosition();
     if(pos.x <= this.object.getRadius()) {
 	this.object.setX(this.object.getRadius());
+	this.blob.setX(0);
 	this.velocity.x = -this.velocity.x;
     }
 
     if(pos.y <= this.object.getRadius()) {
 	this.object.setY(this.object.getRadius());
-//        this.velocity.y = -this.velocity.y;
-
+	this.blob.setY(this.blob.getHeight());
 	this.velocity.y = this.maxVelocity;
     }
 
     var usefulWidth = this.scene.stage.getWidth() - this.object.getRadius();
     if(pos.x >= usefulWidth) {
 	this.object.setX(usefulWidth);
+	if(this.blob)
+	    this.blob.setX(this.scene.stage.getWidth() - this.blob.getWidth());
 	this.velocity.x = -this.velocity.x;
     }
 
     var usefulHeight = this.scene.stage.getHeight() - this.object.getRadius();
     if(pos.y >= usefulHeight) {
 	this.object.setY(usefulHeight);
+	if(this.blob)
+	    this.blob.setY(this.scene.stage.getHeight());
 	this.velocity.y = -this.velocity.y;
     }
 
     this.object.move(this.velocity.x * deltaX, this.velocity.y * deltaY);
+    if(this.blob !== undefined)
+	this.blob.move(this.velocity.x * deltaX, this.velocity.y * deltaY);
 }
 
 Baloon.prototype.collisions = function() {
@@ -234,13 +274,14 @@ Baloon.prototype.collisions = function() {
 Baloon.prototype.kill = function() {
     this.anim.stop();
     this.object.remove();
+    this.blob.remove();
 
     var hi = this.scene.objects.baloons.indexOf(this);
     this.scene.objects.baloons.splice(hi, 1);
 
-    if(this.size > 8) {
-	new Baloon(this.scene, this.size / 2, this.object.getX(), this.object.getY(),  1, 1);
-	new Baloon(this.scene, this.size / 2, this.object.getX(), this.object.getY(), -1, 1);
+    if(this.type < 4) {
+	new Baloon(this.scene, this.type + 1, this.object.getX(), this.object.getY(),  1, 1);
+	new Baloon(this.scene, this.type + 1, this.object.getX(), this.object.getY(), -1, 1);
     }
 
     if(this.scene.objects.baloons.length == 0) {
@@ -465,9 +506,9 @@ $(function() {
     var scene = new Scene();
     new Player(scene, scene.stage.getWidth()/2, 0);
 
-    new Baloon(scene, 32, 120, 200, 1);
-    new Baloon(scene, 32, 320, 200, -1);
-    new Baloon(scene, 16, 20,  80, 1);
-    new Baloon(scene, 16, 160, 80, 1);
-    new Baloon(scene, 16, 240, 80, 1);
+    new Baloon(scene, 1, 120, 200, 1);
+    new Baloon(scene, 1, 320, 200, -1);
+    new Baloon(scene, 2, 20,  80, 1);
+    new Baloon(scene, 2, 160, 80, 1);
+    new Baloon(scene, 2, 240, 80, 1);
 })
