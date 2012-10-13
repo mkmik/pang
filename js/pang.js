@@ -395,17 +395,43 @@ Player.prototype.fire = function() {
 function Harpoon(scene, player) {
     this.scene = scene;
 
+    var x = player.object.getPosition().x + Math.round(player.object.getWidth()/2);
+    var y = player.object.getPosition().y;
+
     this.object = new Kinetic.Rect({
-	x: player.object.getPosition().x + Math.round(player.object.getWidth()/2),
-	y: player.object.getPosition().y,
+	x: x,
+	y: y,
 	width: 4,
 	height: 20,
-	stroke: "blue",
-	strokeWidth: 4
+//	stroke: "blue",
+	strokeWidth: 0
     });
 
     SceneObject.apply(this, [scene, this.object, 'harpoons']);
     this.object.setZIndex(0);
+
+    ///
+
+    var imageObj = new Image();
+    imageObj.onload = function() {
+	console.log("loaded");
+	var blob = new Kinetic.Image({
+	    x: x,
+	    y: y + 22,
+	    width: 12,
+	    height: 203,
+	    image: imageObj,
+	    crop: {x: 18, y: 0, width: 12, height: 203}
+	});
+	blob.setScale(1, -1);
+
+	scene.layer.add(blob);
+	this.blob = blob;
+
+    }.bind(this);
+
+    imageObj.src = "img/sprites/pang2.png";
+
 }
 
 Harpoon.prototype.render = function(frame) {
@@ -413,6 +439,8 @@ Harpoon.prototype.render = function(frame) {
     var delta = Math.round(frame.timeDiff / step);
 
     this.object.setHeight(this.object.getHeight() + delta);
+    if(this.blob !== undefined)
+	this.blob.move(0, delta);
     if(this.object.getHeight() >= this.scene.stage.getHeight())
 	this.kill();
 }
@@ -423,6 +451,7 @@ Harpoon.prototype.collisions = function(frame) {
 Harpoon.prototype.kill = function() {
     this.anim.stop();
     this.object.remove();
+    this.blob.remove();
 
     var hi = this.scene.objects.harpoons.indexOf(this);
     this.scene.objects.harpoons.splice(hi, 1);
