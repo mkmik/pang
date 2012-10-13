@@ -272,23 +272,37 @@ function Player(scene, x, y) {
     var ww = 34;
     var animations = {};
 
-    function animRange(from, len) {
-	var res = [];
-	for(var i=from; i<(from+len); i++)
-	    res.push({
+    function genFrame(i) {
+	return {
 		x: ww*i,
 		y: 1,
 		width: 32,
 		height: 32
-	    });
+	};
+    }
+
+    function genFrameRange(from, len) {
+	var res = [];
+	for(var i=from; i<(from+len); i++)
+	    res.push(genFrame(i));
 	return res;
     }
 
-    animations.leftIdle = animRange(5, 1);
-    animations.rightIdle = animRange(16, 1);
+    function genFrames() {
+	var res = [];
+	for(var i=0; i<arguments.length; i++)
+	    res.push(genFrame(arguments[i]));
+	return res;
+    }
 
-    animations.right = animRange(0, 4);
-    animations.left = animRange(11, 4);
+    animations.leftIdle = genFrameRange(5, 1);
+    animations.rightIdle = genFrameRange(16, 1);
+
+    animations.right = genFrameRange(0, 4);
+    animations.left = genFrameRange(11, 4);
+
+    animations.leftFire = genFrames(21, 5);
+    animations.rightFire = genFrames(20, 16);
 
     imageObj.onload = function() {
 	console.log("loaded");
@@ -363,6 +377,18 @@ Player.prototype.collisions = function() {
 }
 
 Player.prototype.fire = function() {
+    var prev = this.blob.getAnimation();
+    if(prev != 'leftFire' && prev != 'nextFire') {
+	var anim = 'leftFire';
+	if(this.direction == RIGHT || prev == 'rightIdle')
+	    anim = 'rightFire';
+
+	this.blob.setAnimation(anim);
+	this.blob.afterFrame(1, function() {
+	    this.blob.setAnimation(prev);
+	}.bind(this));
+    }
+
     new Harpoon(this.scene, this);
 }
 
@@ -378,7 +404,8 @@ function Harpoon(scene, player) {
 	strokeWidth: 4
     });
 
-    SceneObject.apply(this, [scene, this.object, 'harpoons'])
+    SceneObject.apply(this, [scene, this.object, 'harpoons']);
+    this.object.setZIndex(0);
 }
 
 Harpoon.prototype.render = function(frame) {
