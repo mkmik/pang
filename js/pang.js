@@ -6,8 +6,8 @@ var SPACE = 32;
 var KEY_P = 80;
 
 function Scene() {
-    //this.demo = false;
-    this.demo = true;
+    this.demo = false;
+//    this.demo = true;
 
     var hh = 200;
     this.stage = new Kinetic.Stage({
@@ -279,7 +279,7 @@ Baloon.prototype.kill = function() {
     var hi = this.scene.objects.baloons.indexOf(this);
     this.scene.objects.baloons.splice(hi, 1);
 
-    if(this.type < 3) {
+    if(this.type < 4) {
 	new Baloon(this.scene, this.type + 1, this.object.getX(), this.object.getY(),  1, 1);
 	new Baloon(this.scene, this.type + 1, this.object.getX(), this.object.getY(), -1, 1);
     }
